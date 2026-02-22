@@ -1,0 +1,72 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 10px;
+  background: #f5f5f5;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+section {
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.row, .grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.grid button {
+  width: 60px;
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+}
+
+#saveBtn {
+  width: 100%;
+  background: green;
+  color: white;
+  font-size: 18px;
+}
+
+/* Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+.switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: red;
+  border-radius: 34px;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background: white;
+  border-radius: 50%;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: green;
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}

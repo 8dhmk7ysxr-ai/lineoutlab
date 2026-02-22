@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LineoutLab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<h1>🏉 LineoutLab</h1>
+
+<!-- 1️⃣ VIDEO (OPTIONAL) -->
+<section>
+  <h2>Video (optional)</h2>
+  <input type="file" accept="video/*">
+</section>
+
+<!-- 2️⃣ FIELD ZONE -->
+<section>
+  <h2>Field Zone</h2>
+  <div class="row">
+    <button onclick="setZone('Defensive 22')">Def 22</button>
+    <button onclick="setZone('Defensive Half')">Def Half</button>
+    <button onclick="setZone('Attacking Half')">Att Half</button>
+    <button onclick="setZone('Attacking 22')">Att 22</button>
+  </div>
+</section>
+
+<!-- 3️⃣ JUMPER + BALL POSITION -->
+<section>
+  <h2>Jumper</h2>
+  <div class="grid">
+    <button onclick="setJumper(1)">1</button>
+    <button onclick="setJumper(2)">2</button>
+    <button onclick="setJumper(3)">3</button>
+    <button onclick="setJumper(4)">4</button>
+    <button onclick="setJumper(5)">5</button>
+    <button onclick="setJumper(6)">6</button>
+    <button onclick="setJumper(7)">7</button>
+    <button onclick="setJumper(8)">8</button>
+    <button onclick="setJumper(9)">9</button>
+  </div>
+
+  <h2>Ball Position</h2>
+  <div class="row">
+    <button onclick="setBall('Front')">Front</button>
+    <button onclick="setBall('Middle')">Middle</button>
+    <button onclick="setBall('Back')">Back</button>
+  </div>
+</section>
+
+<!-- 4️⃣ WON / LOST -->
+<section>
+  <h2>Result</h2>
+  <label class="switch">
+    <input type="checkbox" checked onchange="toggleResult()">
+    <span class="slider"></span>
+  </label>
+  <p id="resultLabel">Won</p>
+</section>
+
+<!-- 5️⃣ SET-UP MOVE -->
+<section>
+  <h2>Set-Up Move</h2>
+  <div class="row">
+    <button onclick="setSetup('Drive')">Drive</button>
+    <button onclick="setSetup('Run')">Run</button>
+    <button onclick="setSetup('Move')">Move</button>
+    <button onclick="setSetup('Kick')">Kick</button>
+  </div>
+</section>
+
+<!-- 6️⃣ SAVE -->
+<section>
+  <button id="saveBtn" onclick="saveLineout()" disabled>Save Lineout</button>
+</section>
+
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+</body>
+</html>
