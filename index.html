@@ -1,61 +1,58 @@
-function generateReport() {
-  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LineoutLab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+</head>
 
-  if (!data.length) {
-    alert("No lineouts recorded yet.");
-    return;
-  }
+<body>
 
-  const total = data.length;
-  const wonCount = data.filter(l => l.won).length;
-  const notStraightCount = data.filter(l => l.notStraight).length;
+<h1>🏉 LineoutLab</h1>
 
-  // Group by field zone
-  const zones = {};
+<section>
+  <h2>Team</h2>
+  <input id="teamInput" placeholder="Team name">
+  <button onclick="startMatch()">Start Match</button>
+  <p id="teamDisplay"></p>
+</section>
 
-  data.forEach(l => {
-    const z = l.zone || "Unknown";
-    if (!zones[z]) {
-      zones[z] = {
-        total: 0,
-        won: 0,
-        notStraight: 0
-      };
-    }
+<section>
+  <h2>Field Zone</h2>
+  <div class="row">
+    <button onclick="pick(this,'zone','Def 22')">Def 22</button>
+    <button onclick="pick(this,'zone','Def Half')">Def Half</button>
+    <button onclick="pick(this,'zone','Att Half')">Att Half</button>
+    <button onclick="pick(this,'zone','Att 22')">Att 22</button>
+  </div>
+</section>
 
-    zones[z].total++;
-    if (l.won) zones[z].won++;
-    if (l.notStraight) zones[z].notStraight++;
-  });
+<section>
+  <h2>Result</h2>
+  <div class="row">
+    <button onclick="pick(this,'result',true)">Won</button>
+    <button onclick="pick(this,'result',false)">Lost</button>
+    <button onclick="toggleNS(this)">Not Straight</button>
+  </div>
+</section>
 
-  let report =
-`LINEOUTLAB – MATCH REPORT
+<section>
+  <h2>Players</h2>
+  <div class="row">
+    <button onclick="pick(this,'players',3)">3</button>
+    <button onclick="pick(this,'players',4)">4</button>
+    <button onclick="pick(this,'players',5)">5</button>
+    <button onclick="pick(this,'players',6)">6</button>
+    <button onclick="pick(this,'players',7)">7</button>
+  </div>
+</section>
 
-Team: ${teamName}
-Total lineouts: ${total}
-Won: ${wonCount}
-Success rate: ${Math.round((wonCount / total) * 100)}%
-Not straight: ${notStraightCount}
+<section>
+  <button onclick="saveLineout()">Save Lineout</button>
+  <button onclick="generateReport()">View Match Report</button>
+</section>
 
-FIELD ZONE BREAKDOWN
-`;
-
-  for (let z in zones) {
-    const zone = zones[z];
-    const lost = zone.total - zone.won;
-    const rate = Math.round((zone.won / zone.total) * 100);
-
-    report += `
-${z}
-  Lineouts: ${zone.total}
-  Won: ${zone.won}
-  Lost: ${lost}
-  Success: ${rate}%
-  Not straight: ${zone.notStraight}
-`;
-  }
-
-  report += `\nEnd of report`;
-
-  alert(report);
-}
+<script src="app.js"></script>
+</body>
+</html>
