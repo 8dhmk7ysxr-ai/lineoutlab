@@ -49,56 +49,51 @@ section {
    BASE BUTTON STYLE
    ========================= */
 button {
-  padding: 10px 14px;
+  padding: 12px 14px;
   font-size: 16px;
   border-radius: 8px;
   border: 2px solid #cccccc;
   background-color: #e6e6e6;
   color: #000000;
   cursor: pointer;
-  min-width: 60px;
+  min-width: 64px;
+  height: 48px;              /* 🔒 equal height */
+  box-sizing: border-box;    /* 🔒 prevents Safari shrink */
 }
 
 /* =========================
-   SELECTED (GENERIC)
+   SELECTED – DEFAULT (ALL BUTTONS)
    ========================= */
 button.selected {
-  border: 3px solid #000000;
+  background-color: #0a7d3b;   /* strong visible green */
+  color: #ffffff;
+  border: 3px solid #055c2a;
 }
 
 /* =========================
-   RESULT BUTTONS
+   RESULT / NOT STRAIGHT OVERRIDES
    ========================= */
 .result-btn.selected {
   background-color: #0a7d3b;
-  color: white;
 }
 
 .ns-btn.selected {
   background-color: #c0392b;
-  color: white;
 }
 
 /* =========================
    DEFENDERS FIELD ZONE COLOURS
    ========================= */
-.zone-btn.selected {
-  color: white;
-}
-
-.zone-btn.selected[data-zone="Red"],
-.zone-btn.selected.red {
+.zone-btn.red.selected {
   background-color: #c0392b;
 }
 
-.zone-btn.selected[data-zone="Yellow"],
-.zone-btn.selected.yellow {
+.zone-btn.yellow.selected {
   background-color: #f1c40f;
-  color: black;
+  color: #000000;
 }
 
-.zone-btn.selected[data-zone="Green"],
-.zone-btn.selected.green {
+.zone-btn.green.selected {
   background-color: #27ae60;
 }
 
@@ -115,16 +110,8 @@ input {
 }
 
 /* =========================
-   ACTION BUTTONS
+   REMOVE SAFARI BUG
    ========================= */
-section button:last-child {
-  margin-top: 5px;
-}
-
-/* =========================
-   REPORT READABILITY
-   ========================= */
-pre {
-  white-space: pre-wrap;
-  font-size: 14px;
-}
+/* ❌ REMOVED:
+section button:last-child { ... }
+*/
