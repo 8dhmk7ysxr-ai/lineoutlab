@@ -1,10 +1,10 @@
 /* =========================
-   GLOBAL LAYOUT
+   GLOBAL
    ========================= */
 body {
   font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
   margin: 10px;
-  background-color: #f2f2f2;
+  background: #f2f2f2;
 }
 
 h1 {
@@ -30,7 +30,7 @@ section {
 }
 
 /* =========================
-   BUTTON GROUP LAYOUTS
+   LAYOUT HELPERS
    ========================= */
 .row {
   display: flex;
@@ -43,7 +43,6 @@ section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  justify-items: center;
 }
 
 /* =========================
@@ -58,101 +57,74 @@ button {
   color: #000000;
   cursor: pointer;
   min-width: 60px;
-}.zone-btn.selected {
+}
+
+/* =========================
+   SELECTED (GENERIC)
+   ========================= */
+button.selected {
+  border: 3px solid #000000;
+}
+
+/* =========================
+   RESULT BUTTONS
+   ========================= */
+.result-btn.selected {
+  background-color: #0a7d3b;
   color: white;
 }
 
-.zone-btn.selected:contains("Red") {
+.ns-btn.selected {
+  background-color: #c0392b;
+  color: white;
+}
+
+/* =========================
+   DEFENDERS FIELD ZONE COLOURS
+   ========================= */
+.zone-btn.selected {
+  color: white;
+}
+
+.zone-btn.selected[data-zone="Red"],
+.zone-btn.selected.red {
   background-color: #c0392b;
 }
 
-.zone-btn.selected:contains("Yellow") {
+.zone-btn.selected[data-zone="Yellow"],
+.zone-btn.selected.yellow {
   background-color: #f1c40f;
   color: black;
 }
 
-.zone-btn.selected:contains("Green") {
+.zone-btn.selected[data-zone="Green"],
+.zone-btn.selected.green {
   background-color: #27ae60;
 }
 
 /* =========================
-   SELECTED BUTTON (IMPORTANT)
+   INPUT FIELD
    ========================= */
-button.selected {
-  background-color: #0a7d3b !important;
-  color: #ffffff !important;
-  border: 3px solid #055c2a !important;
-}
-
-/* =========================
-   SAVE BUTTON
-   ========================= */
-#saveBtn {
+input {
   width: 100%;
-  background-color: #0a7d3b;
-  color: #ffffff;
-  font-size: 18px;
-  padding: 14px;
-  border-radius: 10px;
-  border: none;
-}
-
-#saveBtn:disabled {
-  background-color: #999999;
-}
-
-/* =========================
-   SWITCH (WON / LOST)
-   ========================= */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  margin: 10px auto;
-}
-
-.switch input {
-  display: none;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  background-color: #c0392b;
-  border-radius: 34px;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  transition: 0.4s;
-}
-
-.slider:before {
-  content: "";
-  position: absolute;
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #0a7d3b;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-/* =========================
-   RESULT LABEL
-   ========================= */
-#resultLabel {
-  text-align: center;
+  padding: 10px;
   font-size: 16px;
-  font-weight: bold;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* =========================
+   ACTION BUTTONS
+   ========================= */
+section button:last-child {
+  margin-top: 5px;
+}
+
+/* =========================
+   REPORT READABILITY
+   ========================= */
+pre {
+  white-space: pre-wrap;
+  font-size: 14px;
 }
