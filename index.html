@@ -1,103 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>LineoutLab</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-</head>
-<section>
-  <button onclick="generateReport()">View Match Report</button>
-</section>
-<body>
+function generateReport() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
 
-<h1>🏉 LineoutLab</h1>
+  if (!data.length) {
+    alert("No lineouts recorded yet.");
+    return;
+  }
 
-<!-- TEAM -->
-<section id="teamSection">
-  <h2>Team</h2>
-  <input id="teamInput" type="text" placeholder="Team name"
-         style="width:100%; padding:10px; font-size:16px;">
-  <button onclick="startMatch()">Start Match</button>
-  <p id="teamDisplay" style="display:none; font-weight:bold;"></p>
-</section>
+  const total = data.length;
+  const wonCount = data.filter(l => l.won).length;
+  const notStraightCount = data.filter(l => l.notStraight).length;
 
-<!-- FIELD ZONE -->
-<section>
-  <h2>Field Zone</h2>
-  <div class="row">
-    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Defensive 22')">Def 22</button>
-    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Defensive Half')">Def Half</button>
-    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Attacking Half')">Att Half</button>
-    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Attacking 22')">Att 22</button>
-  </div>
-</section>
+  // Group by field zone
+  const zones = {};
 
+  data.forEach(l => {
+    const z = l.zone || "Unknown";
+    if (!zones[z]) {
+      zones[z] = {
+        total: 0,
+        won: 0,
+        notStraight: 0
+      };
+    }
 
-<!-- PLAYERS -->
-<section>
-  <h2>Players in Lineout</h2>
-  <div class="row">
-    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(3)">3</button>
-    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(4)">4</button>
-    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(5)">5</button>
-    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(6)">6</button>
-    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(7)">7</button>
-  </div>
-</section>
+    zones[z].total++;
+    if (l.won) zones[z].won++;
+    if (l.notStraight) zones[z].notStraight++;
+  });
 
-<!-- JUMPER -->
-<section>
-  <h2>Jumper</h2>
-  <div class="grid">
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(1)">1</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(2)">2</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(3)">3</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(4)">4</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(5)">5</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(6)">6</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(7)">7</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(8)">8</button>
-    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(9)">9</button>
-  </div>
-</section>
+  let report =
+`LINEOUTLAB – MATCH REPORT
 
-<!-- BALL -->
-<section>
-  <h2>Ball Position</h2>
-  <div class="row">
-    <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Front')">Front</button>
-    <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Middle')">Middle</button>
-    <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Back')">Back</button>
-  </div>
-</section>
-<!-- RESULT + NOT STRAIGHT -->
-<section>
-  <h2>Result</h2>
-  <div class="row">
-    <button class="result-btn selected" onclick="setResult(true)">Won</button>
-    <button class="result-btn" onclick="setResult(false)">Lost</button>
-    <button class="ns-btn" onclick="toggleNotStraight()">Not Straight</button>
-  </div>
-</section>
+Team: ${teamName}
+Total lineouts: ${total}
+Won: ${wonCount}
+Success rate: ${Math.round((wonCount / total) * 100)}%
+Not straight: ${notStraightCount}
 
-<!-- SETUP -->
-<section>
-  <h2>Set-up Move</h2>
-  <div class="row">
-    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Drive')">Drive</button>
-    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Run')">Run</button>
-    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Move')">Move</button>
-    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Kick')">Kick</button>
-  </div>
-</section>
+FIELD ZONE BREAKDOWN
+`;
 
-<!-- SAVE -->
-<section>
-  <button onclick="saveLineout()">Save Lineout</button>
-  <button onclick="undoLast()">Undo</button>
-</section>
+  for (let z in zones) {
+    const zone = zones[z];
+    const lost = zone.total - zone.won;
+    const rate = Math.round((zone.won / zone.total) * 100);
 
-<script src="app.js"></script>
-</body>
-</html>
+    report += `
+${z}
+  Lineouts: ${zone.total}
+  Won: ${zone.won}
+  Lost: ${lost}
+  Success: ${rate}%
+  Not straight: ${zone.notStraight}
+`;
+  }
+
+  report += `\nEnd of report`;
+
+  alert(report);
+}

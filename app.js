@@ -9,37 +9,56 @@ let notStraight = false;
 
 /* UI helper */
 function selectBtn(btn, group) {
-  document.querySelectorAll("." + group).forEach(b => b.classList.remove("selected"));
+  document.querySelectorAll("." + group)
+    .forEach(b => b.classList.remove("selected"));
   btn.classList.add("selected");
 }
 
 /* Team */
 function startMatch() {
-  const v = teamInput.value.trim();
-  if (!v) return alert("Enter team name");
-  teamName = v;
-  teamDisplay.innerText = "Team: " + v;
+  const name = teamInput.value.trim();
+  if (!name) return alert("Enter team name");
+  teamName = name;
+  localStorage.setItem("currentTeam", name);
+  teamDisplay.innerText = "Team: " + name;
   teamDisplay.style.display = "block";
   teamInput.style.display = "none";
   teamInput.nextElementSibling.style.display = "none";
 }
 
 /* Result */
-function setResult(value) {
+function setResult(value, btn) {
   won = value;
   notStraight = false;
 
-  document.querySelectorAll(".result-btn").forEach(b => b.classList.remove("selected"));
-  event.target.classList.add("selected");
+  document.querySelectorAll(".result-btn")
+    .forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
 
-  if (!won) setup = null;
+  document.querySelectorAll(".ns-btn")
+    .forEach(b => b.classList.remove("selected"));
+
+  if (!won) clearSetup();
 }
 
-function toggleNotStraight() {
+/* Not straight */
+function toggleNotStraight(btn) {
   notStraight = !notStraight;
   won = false;
+  clearSetup();
+
+  btn.classList.toggle("selected");
+
+  document.querySelectorAll(".result-btn")
+    .forEach(b => b.classList.remove("selected"));
+  document.querySelectorAll(".result-btn")[1].classList.add("selected");
+}
+
+/* Clear setup */
+function clearSetup() {
   setup = null;
-  document.querySelector(".ns-btn").classList.toggle("selected");
+  document.querySelectorAll(".setup-btn")
+    .forEach(b => b.classList.remove("selected"));
 }
 
 /* Setters */
@@ -47,7 +66,7 @@ function setZone(v){ zone = v; }
 function setPlayers(v){ players = v; }
 function setJumper(v){ jumper = v; }
 function setBall(v){ ball = v; }
-function setSetup(v){ setup = v; }
+function setSetup(v){ if (won) setup = v; }
 
 /* Save */
 function saveLineout() {
@@ -71,7 +90,7 @@ function saveLineout() {
   });
 
   localStorage.setItem("lineouts", JSON.stringify(data));
-  alert("Saved");
+  alert("Lineout saved");
 }
 
 /* Undo */
@@ -82,6 +101,36 @@ function undoLast() {
   localStorage.setItem("lineouts", JSON.stringify(data));
 }
 
+/* Match report per zone */
+function generateReport() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+  if (!data.length) return alert("No data yet");
+
+  const zones = {};
+  data.forEach(l => {
+    if (!zones[l.zone]) zones[l.zone] = { t:0, w:0, ns:0 };
+    zones[l.zone].t++;
+    if (l.won) zones[l.zone].w++;
+    if (l.notStraight) zones[l.zone].ns++;
+  });
+
+  let report = `LINEOUTLAB MATCH REPORT\n\nTeam: ${teamName}\n\nFIELD ZONES\n`;
+
+  for (let z in zones) {
+    const o = zones[z];
+    report += `
+${z}
+  Lineouts: ${o.t}
+  Won: ${o.w}
+  Lost: ${o.t - o.w}
+  Success: ${Math.round((o.w/o.t)*100)}%
+  Not straight: ${o.ns}
+`;
+  }
+
+  alert(report);
+}
+
 /* Load team */
 window.onload = () => {
   const t = localStorage.getItem("currentTeam");
@@ -89,65 +138,7 @@ window.onload = () => {
     teamName = t;
     teamDisplay.innerText = "Team: " + t;
     teamDisplay.style.display = "block";
+    teamInput.style.display = "none";
+    teamInput.nextElementSibling.style.display = "none";
   }
-}function generateReport() {
-  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
-
-  if (!data.length) {
-    alert("No lineouts recorded yet.");
-    return;
-  }
-
-  const total = data.length;
-  const wonCount = data.filter(l => l.won).length;
-  const notStraightCount = data.filter(l => l.notStraight).length;
-
-  // Group by field zone
-  const zones = {};
-
-  data.forEach(l => {
-    const z = l.zone || "Unknown";
-    if (!zones[z]) {
-      zones[z] = {
-        total: 0,
-        won: 0,
-        notStraight: 0
-      };
-    }
-
-    zones[z].total++;
-    if (l.won) zones[z].won++;
-    if (l.notStraight) zones[z].notStraight++;
-  });
-
-  let report =
-`LINEOUTLAB – MATCH REPORT
-
-Team: ${teamName}
-Total lineouts: ${total}
-Won: ${wonCount}
-Success rate: ${Math.round((wonCount / total) * 100)}%
-Not straight: ${notStraightCount}
-
-FIELD ZONE BREAKDOWN
-`;
-
-  for (let z in zones) {
-    const zone = zones[z];
-    const lost = zone.total - zone.won;
-    const rate = Math.round((zone.won / zone.total) * 100);
-
-    report += `
-${z}
-  Lineouts: ${zone.total}
-  Won: ${zone.won}
-  Lost: ${lost}
-  Success: ${rate}%
-  Not straight: ${zone.notStraight}
-`;
-  }
-
-  report += `\nEnd of report`;
-
-  alert(report);
-}
+};
