@@ -1,4 +1,7 @@
 body {
+  background: pink !important;
+}
+body {
   font-family: Arial, sans-serif;
   margin: 10px;
   background: #f5f5f5;
