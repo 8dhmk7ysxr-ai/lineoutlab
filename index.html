@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <title>LineoutLab</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
 <h1>🏉 LineoutLab</h1>
 
 <!-- 1️⃣ VIDEO (OPTIONAL) -->
@@ -21,10 +23,17 @@
 <section>
   <h2>Field Zone</h2>
   <div class="row">
-    <button onclick="setZone('Defensive 22')">Def 22</button>
-    <button onclick="setZone('Defensive Half')">Def Half</button>
-    <button onclick="setZone('Attacking Half')">Att Half</button>
-    <button onclick="setZone('Attacking 22')">Att 22</button>
+    <button class="zone-btn"
+      onclick="setZone('Defensive 22'); setSelected(this,'zone-btn')">Def 22</button>
+
+    <button class="zone-btn"
+      onclick="setZone('Defensive Half'); setSelected(this,'zone-btn')">Def Half</button>
+
+    <button class="zone-btn"
+      onclick="setZone('Attacking Half'); setSelected(this,'zone-btn')">Att Half</button>
+
+    <button class="zone-btn"
+      onclick="setZone('Attacking 22'); setSelected(this,'zone-btn')">Att 22</button>
   </div>
 </section>
 
@@ -32,32 +41,39 @@
 <section>
   <h2>Jumper</h2>
   <div class="grid">
-    <button onclick="setJumper(1)">1</button>
-    <button onclick="setJumper(2)">2</button>
-    <button onclick="setJumper(3)">3</button>
-    <button onclick="setJumper(4)">4</button>
-    <button onclick="setJumper(5)">5</button>
-    <button onclick="setJumper(6)">6</button>
-    <button onclick="setJumper(7)">7</button>
-    <button onclick="setJumper(8)">8</button>
-    <button onclick="setJumper(9)">9</button>
+    <button class="jumper-btn" onclick="setJumper(1); setSelected(this,'jumper-btn')">1</button>
+    <button class="jumper-btn" onclick="setJumper(2); setSelected(this,'jumper-btn')">2</button>
+    <button class="jumper-btn" onclick="setJumper(3); setSelected(this,'jumper-btn')">3</button>
+    <button class="jumper-btn" onclick="setJumper(4); setSelected(this,'jumper-btn')">4</button>
+    <button class="jumper-btn" onclick="setJumper(5); setSelected(this,'jumper-btn')">5</button>
+    <button class="jumper-btn" onclick="setJumper(6); setSelected(this,'jumper-btn')">6</button>
+    <button class="jumper-btn" onclick="setJumper(7); setSelected(this,'jumper-btn')">7</button>
+    <button class="jumper-btn" onclick="setJumper(8); setSelected(this,'jumper-btn')">8</button>
+    <button class="jumper-btn" onclick="setJumper(9); setSelected(this,'jumper-btn')">9</button>
   </div>
 
   <h2>Ball Position</h2>
   <div class="row">
-    <button onclick="setBall('Front')">Front</button>
-    <button onclick="setBall('Middle')">Middle</button>
-    <button onclick="setBall('Back')">Back</button>
+    <button class="ball-btn"
+      onclick="setBall('Front'); setSelected(this,'ball-btn')">Front</button>
+
+    <button class="ball-btn"
+      onclick="setBall('Middle'); setSelected(this,'ball-btn')">Middle</button>
+
+    <button class="ball-btn"
+      onclick="setBall('Back'); setSelected(this,'ball-btn')">Back</button>
   </div>
 </section>
 
 <!-- 4️⃣ WON / LOST -->
 <section>
   <h2>Result</h2>
+
   <label class="switch">
     <input type="checkbox" checked onchange="toggleResult()">
     <span class="slider"></span>
   </label>
+
   <p id="resultLabel">Won</p>
 </section>
 
@@ -65,24 +81,38 @@
 <section>
   <h2>Set-Up Move</h2>
   <div class="row">
-    <button onclick="setSetup('Drive')">Drive</button>
-    <button onclick="setSetup('Run')">Run</button>
-    <button onclick="setSetup('Move')">Move</button>
-    <button onclick="setSetup('Kick')">Kick</button>
+    <button class="setup-btn"
+      onclick="setSetup('Drive'); setSelected(this,'setup-btn')">Drive</button>
+
+    <button class="setup-btn"
+      onclick="setSetup('Run'); setSelected(this,'setup-btn')">Run</button>
+
+    <button class="setup-btn"
+      onclick="setSetup('Move'); setSelected(this,'setup-btn')">Move</button>
+
+    <button class="setup-btn"
+      onclick="setSetup('Kick'); setSelected(this,'setup-btn')">Kick</button>
   </div>
 </section>
 
-<!-- 6️⃣ SAVE -->
+<!-- 6️⃣ SAVE + UNDO -->
 <section>
-  <button id="saveBtn" onclick="saveLineout()" disabled>Save Lineout</button>
+  <button id="saveBtn" onclick="saveLineout()" disabled>
+    Save Lineout
+  </button>
+
+  <button onclick="undoLast()">
+    Undo Last
+  </button>
 </section>
 
 <script src="app.js"></script>
+
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
 </script>
+
 </body>
 </html>
-<button onclick="undoLast()">Undo Last</button>
