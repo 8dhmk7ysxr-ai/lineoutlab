@@ -90,7 +90,7 @@ window.onload = () => {
     teamDisplay.innerText = "Team: " + t;
     teamDisplay.style.display = "block";
   }
-};function generateReport() {
+}function generateReport() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
 
   if (!data.length) {
@@ -100,46 +100,51 @@ window.onload = () => {
 
   const total = data.length;
   const wonCount = data.filter(l => l.won).length;
-  const lostCount = total - wonCount;
   const notStraightCount = data.filter(l => l.notStraight).length;
 
-  // Helper to count values
-  function countBy(key) {
-    const map = {};
-    data.forEach(l => {
-      if (l[key] !== null && l[key] !== undefined) {
-        map[l[key]] = (map[l[key]] || 0) + 1;
-      }
-    });
-    return map;
-  }
+  // Group by field zone
+  const zones = {};
 
-  const playersUsed = countBy("players");
-  const jumpersUsed = countBy("jumper");
+  data.forEach(l => {
+    const z = l.zone || "Unknown";
+    if (!zones[z]) {
+      zones[z] = {
+        total: 0,
+        won: 0,
+        notStraight: 0
+      };
+    }
+
+    zones[z].total++;
+    if (l.won) zones[z].won++;
+    if (l.notStraight) zones[z].notStraight++;
+  });
 
   let report =
 `LINEOUTLAB – MATCH REPORT
 
 Team: ${teamName}
 Total lineouts: ${total}
-
 Won: ${wonCount}
-Lost: ${lostCount}
 Success rate: ${Math.round((wonCount / total) * 100)}%
-
 Not straight: ${notStraightCount}
 
-Players in lineout:
+FIELD ZONE BREAKDOWN
 `;
 
-  for (let p in playersUsed) {
-    report += `  ${p}-man: ${playersUsed[p]}\n`;
-  }
+  for (let z in zones) {
+    const zone = zones[z];
+    const lost = zone.total - zone.won;
+    const rate = Math.round((zone.won / zone.total) * 100);
 
-  report += `\nJumpers used:\n`;
-
-  for (let j in jumpersUsed) {
-    report += `  #${j}: ${jumpersUsed[j]}\n`;
+    report += `
+${z}
+  Lineouts: ${zone.total}
+  Won: ${zone.won}
+  Lost: ${lost}
+  Success: ${rate}%
+  Not straight: ${zone.notStraight}
+`;
   }
 
   report += `\nEnd of report`;
