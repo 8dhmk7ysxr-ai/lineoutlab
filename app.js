@@ -7,14 +7,20 @@ let setup = null;
 let won = true;
 let notStraight = false;
 
-/* UI helper */
+/* HARD VISUAL SELECT (NO CSS DEPENDENCY) */
 function selectBtn(btn, group) {
-  document.querySelectorAll("." + group)
-    .forEach(b => b.classList.remove("selected"));
-  btn.classList.add("selected");
+  document.querySelectorAll("." + group).forEach(b => {
+    b.style.backgroundColor = "#e6e6e6";
+    b.style.color = "#000";
+    b.style.border = "2px solid #ccc";
+  });
+
+  btn.style.backgroundColor = "#0a7d3b";
+  btn.style.color = "#fff";
+  btn.style.border = "3px solid #055c2a";
 }
 
-/* Team */
+/* TEAM */
 function startMatch() {
   const name = teamInput.value.trim();
   if (!name) return alert("Enter team name");
@@ -26,49 +32,56 @@ function startMatch() {
   teamInput.nextElementSibling.style.display = "none";
 }
 
-/* Result */
+/* FIELD */
+function setZone(v){ zone = v; }
+
+/* RESULT */
 function setResult(value, btn) {
   won = value;
   notStraight = false;
-
-  document.querySelectorAll(".result-btn")
-    .forEach(b => b.classList.remove("selected"));
-  btn.classList.add("selected");
-
-  document.querySelectorAll(".ns-btn")
-    .forEach(b => b.classList.remove("selected"));
-
+  selectBtn(btn, "result-btn");
   if (!won) clearSetup();
 }
 
-/* Not straight */
 function toggleNotStraight(btn) {
   notStraight = !notStraight;
   won = false;
   clearSetup();
 
-  btn.classList.toggle("selected");
+  document.querySelectorAll(".ns-btn").forEach(b => {
+    b.style.backgroundColor = "#e6e6e6";
+    b.style.color = "#000";
+  });
 
-  document.querySelectorAll(".result-btn")
-    .forEach(b => b.classList.remove("selected"));
-  document.querySelectorAll(".result-btn")[1].classList.add("selected");
+  if (notStraight) {
+    btn.style.backgroundColor = "#c0392b";
+    btn.style.color = "#fff";
+  }
+
+  document.querySelectorAll(".result-btn").forEach(b => {
+    b.style.backgroundColor = "#e6e6e6";
+    b.style.color = "#000";
+  });
+  document.querySelectorAll(".result-btn")[1].style.backgroundColor = "#c0392b";
+  document.querySelectorAll(".result-btn")[1].style.color = "#fff";
 }
 
-/* Clear setup */
-function clearSetup() {
-  setup = null;
-  document.querySelectorAll(".setup-btn")
-    .forEach(b => b.classList.remove("selected"));
-}
-
-/* Setters */
-function setZone(v){ zone = v; }
+/* SETTERS */
 function setPlayers(v){ players = v; }
 function setJumper(v){ jumper = v; }
 function setBall(v){ ball = v; }
 function setSetup(v){ if (won) setup = v; }
 
-/* Save */
+/* CLEAR SETUP */
+function clearSetup() {
+  setup = null;
+  document.querySelectorAll(".setup-btn").forEach(b => {
+    b.style.backgroundColor = "#e6e6e6";
+    b.style.color = "#000";
+  });
+}
+
+/* SAVE (MINIMUM REQUIRED ONLY) */
 function saveLineout() {
   if (!teamName || !zone) {
     alert("Team name and field zone required");
@@ -93,7 +106,7 @@ function saveLineout() {
   alert("Lineout saved");
 }
 
-/* Undo */
+/* UNDO */
 function undoLast() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
   if (!data.length) return;
@@ -101,7 +114,7 @@ function undoLast() {
   localStorage.setItem("lineouts", JSON.stringify(data));
 }
 
-/* Match report per zone */
+/* REPORT PER FIELD ZONE */
 function generateReport() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
   if (!data.length) return alert("No data yet");
@@ -131,7 +144,7 @@ ${z}
   alert(report);
 }
 
-/* Load team */
+/* LOAD TEAM */
 window.onload = () => {
   const t = localStorage.getItem("currentTeam");
   if (t) {
