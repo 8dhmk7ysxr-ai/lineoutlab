@@ -6,7 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
-
+<section>
+  <button onclick="generateReport()">View Match Report</button>
+</section>
 <body>
 
 <h1>🏉 LineoutLab</h1>
@@ -31,15 +33,6 @@
   </div>
 </section>
 
-<!-- RESULT + NOT STRAIGHT -->
-<section>
-  <h2>Result</h2>
-  <div class="row">
-    <button class="result-btn selected" onclick="setResult(true)">Won</button>
-    <button class="result-btn" onclick="setResult(false)">Lost</button>
-    <button class="ns-btn" onclick="toggleNotStraight()">Not Straight</button>
-  </div>
-</section>
 
 <!-- PLAYERS -->
 <section>
@@ -76,6 +69,15 @@
     <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Front')">Front</button>
     <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Middle')">Middle</button>
     <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Back')">Back</button>
+  </div>
+</section>
+<!-- RESULT + NOT STRAIGHT -->
+<section>
+  <h2>Result</h2>
+  <div class="row">
+    <button class="result-btn selected" onclick="setResult(true)">Won</button>
+    <button class="result-btn" onclick="setResult(false)">Lost</button>
+    <button class="ns-btn" onclick="toggleNotStraight()">Not Straight</button>
   </div>
 </section>
 

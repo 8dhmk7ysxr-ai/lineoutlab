@@ -90,4 +90,59 @@ window.onload = () => {
     teamDisplay.innerText = "Team: " + t;
     teamDisplay.style.display = "block";
   }
-};
+};function generateReport() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+
+  if (!data.length) {
+    alert("No lineouts recorded yet.");
+    return;
+  }
+
+  const total = data.length;
+  const wonCount = data.filter(l => l.won).length;
+  const lostCount = total - wonCount;
+  const notStraightCount = data.filter(l => l.notStraight).length;
+
+  // Helper to count values
+  function countBy(key) {
+    const map = {};
+    data.forEach(l => {
+      if (l[key] !== null && l[key] !== undefined) {
+        map[l[key]] = (map[l[key]] || 0) + 1;
+      }
+    });
+    return map;
+  }
+
+  const playersUsed = countBy("players");
+  const jumpersUsed = countBy("jumper");
+
+  let report =
+`LINEOUTLAB – MATCH REPORT
+
+Team: ${teamName}
+Total lineouts: ${total}
+
+Won: ${wonCount}
+Lost: ${lostCount}
+Success rate: ${Math.round((wonCount / total) * 100)}%
+
+Not straight: ${notStraightCount}
+
+Players in lineout:
+`;
+
+  for (let p in playersUsed) {
+    report += `  ${p}-man: ${playersUsed[p]}\n`;
+  }
+
+  report += `\nJumpers used:\n`;
+
+  for (let j in jumpersUsed) {
+    report += `  #${j}: ${jumpersUsed[j]}\n`;
+  }
+
+  report += `\nEnd of report`;
+
+  alert(report);
+}
