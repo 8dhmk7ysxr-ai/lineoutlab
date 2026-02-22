@@ -187,4 +187,41 @@ ${z}
   report += `END OF REPORT`;
 
   alert(report);
+}unction exportToExcel() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+
+  if (!data.length) {
+    alert("No data to export");
+    return;
+  }
+
+  // CSV header
+  let csv = [
+    "Team,Zone,Result,NotStraight,Players,Jumper,BallPosition,SetupMove,Timestamp"
+  ];
+
+  // Rows
+  data.forEach(l => {
+    csv.push([
+      l.team,
+      l.zone,
+      l.result ? "Won" : "Lost",
+      l.notStraight ? "Yes" : "No",
+      l.players || "",
+      l.jumper || "",
+      l.ball || "",
+      l.setup || "",
+      new Date(l.time).toLocaleString()
+    ].join(","));
+  });
+
+  const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${state.team}-LineoutLab.csv`;
+  a.click();
+
+  URL.revokeObjectURL(url);
 }
