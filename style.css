@@ -58,6 +58,21 @@ button {
   color: #000000;
   cursor: pointer;
   min-width: 60px;
+}.zone-btn.selected {
+  color: white;
+}
+
+.zone-btn.selected:contains("Red") {
+  background-color: #c0392b;
+}
+
+.zone-btn.selected:contains("Yellow") {
+  background-color: #f1c40f;
+  color: black;
+}
+
+.zone-btn.selected:contains("Green") {
+  background-color: #27ae60;
 }
 
 /* =========================
