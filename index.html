@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>LineoutLab</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,10 +11,10 @@
 
 <h1>🏉 LineoutLab</h1>
 
-<!-- TEAM NAME -->
+<!-- TEAM -->
 <section id="teamSection">
-  <h2>Team Name</h2>
-  <input id="teamInput" type="text" placeholder="Enter team name"
+  <h2>Team</h2>
+  <input id="teamInput" type="text" placeholder="Team name"
          style="width:100%; padding:10px; font-size:16px;">
   <button onclick="startMatch()">Start Match</button>
   <p id="teamDisplay" style="display:none; font-weight:bold;"></p>
@@ -25,10 +24,20 @@
 <section>
   <h2>Field Zone</h2>
   <div class="row">
-    <button class="zone-btn" onclick="setZone('Defensive 22'); setSelected(this,'zone-btn')">Def 22</button>
-    <button class="zone-btn" onclick="setZone('Defensive Half'); setSelected(this,'zone-btn')">Def Half</button>
-    <button class="zone-btn" onclick="setZone('Attacking Half'); setSelected(this,'zone-btn')">Att Half</button>
-    <button class="zone-btn" onclick="setZone('Attacking 22'); setSelected(this,'zone-btn')">Att 22</button>
+    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Defensive 22')">Def 22</button>
+    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Defensive Half')">Def Half</button>
+    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Attacking Half')">Att Half</button>
+    <button class="zone-btn" onclick="selectBtn(this,'zone-btn'); setZone('Attacking 22')">Att 22</button>
+  </div>
+</section>
+
+<!-- RESULT + NOT STRAIGHT -->
+<section>
+  <h2>Result</h2>
+  <div class="row">
+    <button class="result-btn selected" onclick="setResult(true)">Won</button>
+    <button class="result-btn" onclick="setResult(false)">Lost</button>
+    <button class="ns-btn" onclick="toggleNotStraight()">Not Straight</button>
   </div>
 </section>
 
@@ -36,76 +45,55 @@
 <section>
   <h2>Players in Lineout</h2>
   <div class="row">
-    <button class="players-btn" onclick="setPlayers(3); setSelected(this,'players-btn')">3</button>
-    <button class="players-btn" onclick="setPlayers(4); setSelected(this,'players-btn')">4</button>
-    <button class="players-btn" onclick="setPlayers(5); setSelected(this,'players-btn')">5</button>
-    <button class="players-btn" onclick="setPlayers(6); setSelected(this,'players-btn')">6</button>
-    <button class="players-btn" onclick="setPlayers(7); setSelected(this,'players-btn')">7</button>
+    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(3)">3</button>
+    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(4)">4</button>
+    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(5)">5</button>
+    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(6)">6</button>
+    <button class="players-btn" onclick="selectBtn(this,'players-btn'); setPlayers(7)">7</button>
   </div>
 </section>
 
-<!-- JUMPER + BALL -->
+<!-- JUMPER -->
 <section>
   <h2>Jumper</h2>
   <div class="grid">
-    <button class="jumper-btn" onclick="setJumper(1); setSelected(this,'jumper-btn')">1</button>
-    <button class="jumper-btn" onclick="setJumper(2); setSelected(this,'jumper-btn')">2</button>
-    <button class="jumper-btn" onclick="setJumper(3); setSelected(this,'jumper-btn')">3</button>
-    <button class="jumper-btn" onclick="setJumper(4); setSelected(this,'jumper-btn')">4</button>
-    <button class="jumper-btn" onclick="setJumper(5); setSelected(this,'jumper-btn')">5</button>
-    <button class="jumper-btn" onclick="setJumper(6); setSelected(this,'jumper-btn')">6</button>
-    <button class="jumper-btn" onclick="setJumper(7); setSelected(this,'jumper-btn')">7</button>
-    <button class="jumper-btn" onclick="setJumper(8); setSelected(this,'jumper-btn')">8</button>
-    <button class="jumper-btn" onclick="setJumper(9); setSelected(this,'jumper-btn')">9</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(1)">1</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(2)">2</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(3)">3</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(4)">4</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(5)">5</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(6)">6</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(7)">7</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(8)">8</button>
+    <button class="jumper-btn" onclick="selectBtn(this,'jumper-btn'); setJumper(9)">9</button>
   </div>
+</section>
 
+<!-- BALL -->
+<section>
   <h2>Ball Position</h2>
   <div class="row">
-    <button class="ball-btn" onclick="setBall('Front'); setSelected(this,'ball-btn')">Front</button>
-    <button class="ball-btn" onclick="setBall('Middle'); setSelected(this,'ball-btn')">Middle</button>
-    <button class="ball-btn" onclick="setBall('Back'); setSelected(this,'ball-btn')">Back</button>
+    <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Front')">Front</button>
+    <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Middle')">Middle</button>
+    <button class="ball-btn" onclick="selectBtn(this,'ball-btn'); setBall('Back')">Back</button>
   </div>
 </section>
 
-<!-- RESULT -->
+<!-- SETUP -->
 <section>
-  <h2>Result</h2>
-  <label class="switch">
-    <input type="checkbox" checked onchange="toggleResult()">
-    <span class="slider"></span>
-  </label>
-  <p id="resultLabel">Won</p>
-</section>
-
-<!-- NOT STRAIGHT -->
-<section>
-  <h2>Not Straight</h2>
-  <label class="switch">
-    <input type="checkbox" onchange="toggleNotStraight(this.checked)">
-    <span class="slider"></span>
-  </label>
-</section>
-
-<!-- SET-UP MOVE -->
-<section>
-  <h2>Set-Up Move (Won only)</h2>
+  <h2>Set-up Move</h2>
   <div class="row">
-    <button class="setup-btn" onclick="setSetup('Drive'); setSelected(this,'setup-btn')">Drive</button>
-    <button class="setup-btn" onclick="setSetup('Run'); setSelected(this,'setup-btn')">Run</button>
-    <button class="setup-btn" onclick="setSetup('Move'); setSelected(this,'setup-btn')">Move</button>
-    <button class="setup-btn" onclick="setSetup('Kick'); setSelected(this,'setup-btn')">Kick</button>
+    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Drive')">Drive</button>
+    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Run')">Run</button>
+    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Move')">Move</button>
+    <button class="setup-btn" onclick="selectBtn(this,'setup-btn'); setSetup('Kick')">Kick</button>
   </div>
 </section>
 
-<!-- ACTIONS -->
+<!-- SAVE -->
 <section>
-  <button id="saveBtn" onclick="saveLineout()" disabled>Save Lineout</button>
-  <button onclick="undoLast()">Undo Last</button>
-</section>
-
-<section>
-  <button onclick="exportMatch()">Export Match Data</button>
-  <button onclick="generateReport()">View Match Report</button>
+  <button onclick="saveLineout()">Save Lineout</button>
+  <button onclick="undoLast()">Undo</button>
 </section>
 
 <script src="app.js"></script>
