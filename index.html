@@ -11,6 +11,7 @@
 
 <h1>🏉 LineoutLab</h1>
 
+<!-- TEAM -->
 <section>
   <h2>Team</h2>
   <input id="teamInput" placeholder="Team name">
@@ -18,6 +19,7 @@
   <p id="teamDisplay"></p>
 </section>
 
+<!-- FIELD ZONE -->
 <section>
   <h2>Field Zone</h2>
   <div class="row">
@@ -28,6 +30,7 @@
   </div>
 </section>
 
+<!-- RESULT + NOT STRAIGHT -->
 <section>
   <h2>Result</h2>
   <div class="row">
@@ -37,8 +40,9 @@
   </div>
 </section>
 
+<!-- PLAYERS -->
 <section>
-  <h2>Players</h2>
+  <h2>Players in Lineout</h2>
   <div class="row">
     <button onclick="pick(this,'players',3)">3</button>
     <button onclick="pick(this,'players',4)">4</button>
@@ -48,6 +52,44 @@
   </div>
 </section>
 
+<!-- JUMPER -->
+<section>
+  <h2>Jumper</h2>
+  <div class="grid">
+    <button onclick="pick(this,'jumper',1)">1</button>
+    <button onclick="pick(this,'jumper',2)">2</button>
+    <button onclick="pick(this,'jumper',3)">3</button>
+    <button onclick="pick(this,'jumper',4)">4</button>
+    <button onclick="pick(this,'jumper',5)">5</button>
+    <button onclick="pick(this,'jumper',6)">6</button>
+    <button onclick="pick(this,'jumper',7)">7</button>
+    <button onclick="pick(this,'jumper',8)">8</button>
+    <button onclick="pick(this,'jumper',9)">9</button>
+  </div>
+</section>
+
+<!-- BALL POSITION -->
+<section>
+  <h2>Ball Position</h2>
+  <div class="row">
+    <button onclick="pick(this,'ball','Front')">Front</button>
+    <button onclick="pick(this,'ball','Middle')">Middle</button>
+    <button onclick="pick(this,'ball','Back')">Back</button>
+  </div>
+</section>
+
+<!-- SET-UP MOVE -->
+<section>
+  <h2>Set-up Move (won only)</h2>
+  <div class="row">
+    <button onclick="pick(this,'setup','Drive')">Drive</button>
+    <button onclick="pick(this,'setup','Run')">Run</button>
+    <button onclick="pick(this,'setup','Move')">Move</button>
+    <button onclick="pick(this,'setup','Kick')">Kick</button>
+  </div>
+</section>
+
+<!-- ACTIONS -->
 <section>
   <button onclick="saveLineout()">Save Lineout</button>
   <button onclick="generateReport()">View Match Report</button>
