@@ -140,8 +140,12 @@
   </button>
 </section>
 
+<section>
+  <h2>Export</h2>
+  <button onclick="exportMatch()">Export Match Data</button>
+</section>
 <script src="app.js"></script>
-
+<button onclick="generateReport()">View Match Report</button>
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');

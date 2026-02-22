@@ -193,3 +193,86 @@ function bestOptionForZone(targetZone) {
 
   return best;
 }
+function exportMatch() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+
+  if (data.length === 0) {
+    alert("No lineouts to export.");
+    return;
+  }
+
+  const exportData = {
+    team: teamName,
+    date: new Date().toISOString(),
+    totalLineouts: data.length,
+    lineouts: data
+  };
+function generateReport() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+
+  if (data.length === 0) {
+    alert("No data available for report.");
+    return;
+  }
+
+  let wins = data.filter(l => l.won).length;
+  let winRate = Math.round((wins / data.length) * 100);
+
+  function bestOf(key) {
+    const stats = {};
+    data.forEach(l => {
+      const k = l[key];
+      if (!stats[k]) stats[k] = { w: 0, t: 0 };
+      stats[k].t++;
+      if (l.won) stats[k].w++;
+    });
+
+    let best = "-";
+    let bestRate = 0;
+
+    for (let k in stats) {
+      if (stats[k].t >= 3) {
+        const r = stats[k].w / stats[k].t;
+        if (r > bestRate) {
+          bestRate = r;
+          best = `${k} (${Math.round(r * 100)}%)`;
+        }
+      }
+    }
+    return best;
+  }
+
+  const report = `
+LINEOUTLAB – MATCH REPORT
+
+Team: ${teamName}
+Date: ${new Date().toLocaleString()}
+
+Total lineouts: ${data.length}
+Lineouts won: ${wins}
+Success rate: ${winRate}%
+
+Best jumper: ${bestOf("jumper")}
+Best ball position: ${bestOf("ball")}
+Best set-up move: ${bestOf("setup")}
+Best players in lineout: ${bestOf("players")}
+
+End of report
+  `;
+
+  alert(report);
+}
+  const blob = new Blob(
+    [JSON.stringify(exportData, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = `${teamName || "team"}-lineoutlab.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
