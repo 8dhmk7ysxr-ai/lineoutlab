@@ -12,7 +12,23 @@
 <body>
 
 <h1>🏉 LineoutLab</h1>
+<!-- TEAM NAME (REQUIRED BEFORE MATCH) -->
+<section id="teamSection">
+  <h2>Team Name</h2>
 
+  <input
+    type="text"
+    id="teamInput"
+    placeholder="Enter team name"
+    style="width:100%; padding:10px; font-size:16px;"
+  />
+
+  <button onclick="startMatch()">
+    Start Match
+  </button>
+
+  <p id="teamDisplay" style="display:none; font-weight:bold;"></p>
+</section>
 <!-- 1️⃣ VIDEO (OPTIONAL) -->
 <section>
   <h2>Video (optional)</h2>
