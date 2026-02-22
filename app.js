@@ -1,3 +1,4 @@
+alert("app.js loaded");
 let zone = null;
 let jumper = null;
 let ball = null;
