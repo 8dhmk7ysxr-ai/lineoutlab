@@ -1,6 +1,7 @@
 /* =========================
    GLOBAL STATE
    ========================= */
+let teamName = null;
 let zone = null;
 let jumper = null;
 let ball = null;
@@ -15,7 +16,23 @@ function setSelected(button, groupClass) {
     .forEach(b => b.classList.remove("selected"));
   button.classList.add("selected");
 }
+function startMatch() {
+  const input = document.getElementById("teamInput");
+  const name = input.value.trim();
 
+  if (name === "") {
+    alert("Please enter a team name before starting the match.");
+    return;
+  }
+
+  teamName = name;
+  localStorage.setItem("currentTeam", teamName);
+
+  document.getElementById("teamDisplay").innerText = "Team: " + teamName;
+  document.getElementById("teamDisplay").style.display = "block";
+  input.style.display = "none";
+  input.nextElementSibling.style.display = "none"; // hides Start Match button
+}
 /* =========================
    SETTERS (CALLED BY BUTTONS)
    ========================= */
