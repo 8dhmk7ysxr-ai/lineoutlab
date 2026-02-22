@@ -1,278 +1,171 @@
-/* =========================
-   GLOBAL STATE
-   ========================= */
+/* GLOBAL STATE */
 let teamName = null;
 let zone = null;
+let players = null;
 let jumper = null;
 let ball = null;
 let setup = null;
 let won = true;
+let notStraight = false;
 
-/* =========================
-   UI HELPERS
-   ========================= */
-function setSelected(button, groupClass) {
-  document.querySelectorAll("." + groupClass)
-    .forEach(b => b.classList.remove("selected"));
+/* UI HELPER */
+function setSelected(button, group) {
+  document.querySelectorAll("." + group).forEach(b => b.classList.remove("selected"));
   button.classList.add("selected");
 }
+
+/* TEAM */
 function startMatch() {
   const input = document.getElementById("teamInput");
-  const name = input.value.trim();
-
-  if (name === "") {
-    alert("Please enter a team name before starting the match.");
+  if (!input.value.trim()) {
+    alert("Enter a team name first");
     return;
   }
-
-  teamName = name;
+  teamName = input.value.trim();
   localStorage.setItem("currentTeam", teamName);
 
   document.getElementById("teamDisplay").innerText = "Team: " + teamName;
   document.getElementById("teamDisplay").style.display = "block";
   input.style.display = "none";
-  input.nextElementSibling.style.display = "none"; // hides Start Match button
-}
-/* =========================
-   SETTERS (CALLED BY BUTTONS)
-   ========================= */
-function setZone(value) {
-  zone = value;
+  input.nextElementSibling.style.display = "none";
+
   validate();
 }
 
-function setJumper(value) {
-  jumper = value;
-  validate();
-}
+/* SETTERS */
+function setZone(v){ zone = v; validate(); }
+function setPlayers(v){ players = v; validate(); }
+function setJumper(v){ jumper = v; validate(); }
+function setBall(v){ ball = v; validate(); }
+function setSetup(v){ setup = v; validate(); }
 
-function setBall(value) {
-  ball = value;
-  validate();
-}
-
-function setSetup(value) {
-  setup = value;
-  validate();
-}
-
-/* =========================
-   RESULT SWITCH
-   ========================= */
+/* RESULT */
 function toggleResult() {
   won = !won;
-  const label = document.getElementById("resultLabel");
-  if (label) {
-    label.innerText = won ? "Won" : "Lost";
+  document.getElementById("resultLabel").innerText = won ? "Won" : "Lost";
+
+  if (won) {
+    notStraight = false;
+  } else {
+    setup = null;
+    document.querySelectorAll(".setup-btn").forEach(b => b.classList.remove("selected"));
   }
+  validate();
 }
 
-/* =========================
-   VALIDATION
-   ========================= */
+/* NOT STRAIGHT */
+function toggleNotStraight(value) {
+  notStraight = value;
+
+  if (notStraight) {
+    won = false;
+    setup = null;
+    document.getElementById("resultLabel").innerText = "Lost";
+    document.querySelectorAll(".setup-btn").forEach(b => b.classList.remove("selected"));
+  }
+
+  validate();
+}
+
+/* VALIDATION */
 function validate() {
-  const saveBtn = document.getElementById("saveBtn");
-  if (!saveBtn) return;
+  const baseReady =
+    teamName && zone && players && jumper && ball;
 
   const ready =
-  teamName !== null &&
-  zone !== null &&
-  jumper !== null &&
-  ball !== null &&
-  setup !== null;
+    won ? baseReady && setup : baseReady;
 
-  saveBtn.disabled = !ready;
+  document.getElementById("saveBtn").disabled = !ready;
 }
 
-/* =========================
-   SAVE LINEOUT
-   ========================= */
+/* SAVE */
 function saveLineout() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
 
   data.push({
-  team: teamName,
-  zone,
-  jumper,
-  ball,
-  setup,
-  won,
-  timestamp: Date.now()
-});
+    team: teamName,
+    zone,
+    players,
+    jumper,
+    ball,
+    setup,
+    won,
+    notStraight,
+    timestamp: Date.now()
+  });
 
   localStorage.setItem("lineouts", JSON.stringify(data));
-
   resetForm();
   alert("Lineout saved");
 }
 
-/* =========================
-   UNDO LAST LINEOUT
-   ========================= */
+/* RESET */
+function resetForm() {
+  zone = players = jumper = ball = setup = null;
+  won = true;
+  notStraight = false;
+
+  document.querySelectorAll(".selected").forEach(b => b.classList.remove("selected"));
+  document.getElementById("resultLabel").innerText = "Won";
+
+  validate();
+}
+
+/* UNDO */
 function undoLast() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
-  if (data.length === 0) {
-    alert("Nothing to undo");
-    return;
-  }
-
+  if (!data.length) return alert("Nothing to undo");
   data.pop();
   localStorage.setItem("lineouts", JSON.stringify(data));
   alert("Last lineout removed");
 }
 
-/* =========================
-   RESET FORM AFTER SAVE
-   ========================= */
-function resetForm() {
-  zone = null;
-  jumper = null;
-  ball = null;
-  setup = null;
-  won = true;
-
-  document.querySelectorAll("button.selected")
-    .forEach(b => b.classList.remove("selected"));
-
-  const label = document.getElementById("resultLabel");
-  if (label) label.innerText = "Won";
-
-  const saveBtn = document.getElementById("saveBtn");
-  if (saveBtn) saveBtn.disabled = true;
-}
-
-/* =========================
-   STATS LOGIC (FOR LATER USE)
-   ========================= */
-function getStats(key) {
-  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
-  const stats = {};
-
-  data.forEach(l => {
-    const k = l[key];
-    if (!stats[k]) stats[k] = { win: 0, total: 0 };
-    stats[k].total++;
-    if (l.won) stats[k].win++;
-  });
-
-  return stats;
-}
-
-/* =========================
-   BEST OPTION PER ZONE
-   ========================= */
-function bestOptionForZone(targetZone) {
-  const data = JSON.parse(localStorage.getItem("lineouts") || "[]")
-    .filter(l => l.zone === targetZone);
-
-  const map = {};
-
-  data.forEach(l => {
-    const key = `${l.jumper}-${l.ball}-${l.setup}`;
-    if (!map[key]) map[key] = { win: 0, total: 0 };
-    map[key].total++;
-    if (l.won) map[key].win++;
-  });
-
-  let best = null;
-  let bestRate = 0;
-
-  for (let key in map) {
-    if (map[key].total >= 3) {
-      const rate = map[key].win / map[key].total;
-      if (rate > bestRate) {
-        bestRate = rate;
-        best = {
-          combo: key,
-          success: Math.round(rate * 100),
-          attempts: map[key].total
-        };
-      }
-    }
-  }
-
-  return best;
-}
+/* EXPORT */
 function exportMatch() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+  if (!data.length) return alert("No data to export");
 
-  if (data.length === 0) {
-    alert("No lineouts to export.");
-    return;
-  }
-
-  const exportData = {
-    team: teamName,
-    date: new Date().toISOString(),
-    totalLineouts: data.length,
-    lineouts: data
-  };
-function generateReport() {
-  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
-
-  if (data.length === 0) {
-    alert("No data available for report.");
-    return;
-  }
-
-  let wins = data.filter(l => l.won).length;
-  let winRate = Math.round((wins / data.length) * 100);
-
-  function bestOf(key) {
-    const stats = {};
-    data.forEach(l => {
-      const k = l[key];
-      if (!stats[k]) stats[k] = { w: 0, t: 0 };
-      stats[k].t++;
-      if (l.won) stats[k].w++;
-    });
-
-    let best = "-";
-    let bestRate = 0;
-
-    for (let k in stats) {
-      if (stats[k].t >= 3) {
-        const r = stats[k].w / stats[k].t;
-        if (r > bestRate) {
-          bestRate = r;
-          best = `${k} (${Math.round(r * 100)}%)`;
-        }
-      }
-    }
-    return best;
-  }
-
-  const report = `
-LINEOUTLAB – MATCH REPORT
-
-Team: ${teamName}
-Date: ${new Date().toLocaleString()}
-
-Total lineouts: ${data.length}
-Lineouts won: ${wins}
-Success rate: ${winRate}%
-
-Best jumper: ${bestOf("jumper")}
-Best ball position: ${bestOf("ball")}
-Best set-up move: ${bestOf("setup")}
-Best players in lineout: ${bestOf("players")}
-
-End of report
-  `;
-
-  alert(report);
-}
   const blob = new Blob(
-    [JSON.stringify(exportData, null, 2)],
+    [JSON.stringify({ team: teamName, lineouts: data }, null, 2)],
     { type: "application/json" }
   );
 
-  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-
-  a.href = url;
-  a.download = `${teamName || "team"}-lineoutlab.json`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `${teamName}-lineoutlab.json`;
   a.click();
-
-  URL.revokeObjectURL(url);
 }
+
+/* REPORT */
+function generateReport() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+  if (!data.length) return alert("No data available");
+
+  const wins = data.filter(l => l.won).length;
+  const rate = Math.round((wins / data.length) * 100);
+
+  alert(
+`LINEOUTLAB MATCH REPORT
+
+Team: ${teamName}
+Total lineouts: ${data.length}
+Won: ${wins}
+Success: ${rate}%
+
+Not straight throws: ${data.filter(l => l.notStraight).length}
+
+End of report`
+  );
+}
+
+/* LOAD TEAM */
+window.onload = () => {
+  const saved = localStorage.getItem("currentTeam");
+  if (saved) {
+    teamName = saved;
+    document.getElementById("teamDisplay").innerText = "Team: " + teamName;
+    document.getElementById("teamDisplay").style.display = "block";
+    document.getElementById("teamInput").style.display = "none";
+    document.querySelector("#teamSection button").style.display = "none";
+  }
+};
