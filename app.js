@@ -73,23 +73,118 @@ function saveLineout() {
 /* Report per field zone */
 function generateReport() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
-  if (!data.length) return alert("No data recorded");
+  if (!data.length) {
+    alert("No data recorded");
+    return;
+  }
 
   const zones = {};
 
   data.forEach(l => {
-    zones[l.zone] = zones[l.zone] || { t:0, w:0, ns:0 };
-    zones[l.zone].t++;
-    if (l.result) zones[l.zone].w++;
-    if (l.notStraight) zones[l.zone].ns++;
+    const z = l.zone || "Unknown";
+    if (!zones[z]) {
+      zones[z] = {
+        total: 0,
+        setups: {},
+        jumpers: {},
+        players: {},
+        balls: {}
+      };
+    }
+
+    zones[z].total++;
+
+    // Set-up move
+    if (l.setup) {
+      zones[z].setups[l.setup] =
+        (zones[z].setups[l.setup] || 0) + 1;
+    }
+
+    // Jumper
+    if (l.jumper) {
+      zones[z].jumpers[l.jumper] =
+        (zones[z].jumpers[l.jumper] || 0) + 1;
+    }
+
+    // Players in lineout
+    if (l.players) {
+      zones[z].players[l.players] =
+        (zones[z].players[l.players] || 0) + 1;
+    }
+
+    // Ball position
+    if (l.ball) {
+      zones[z].balls[l.ball] =
+        (zones[z].balls[l.ball] || 0) + 1;
+    }
   });
 
-  let r = `LINEOUTLAB MATCH REPORT\n\nTeam: ${state.team}\n\n`;
+  let report =
+`LINEOUTLAB – MATCH REPORT
+
+Team: ${state.team}
+
+PER FIELD ZONE BREAKDOWN
+`;
 
   for (let z in zones) {
-    const o = zones[z];
-    r += `${z}\n  Won: ${o.w}/${o.t}\n  Success: ${Math.round(o.w/o.t*100)}%\n  Not straight: ${o.ns}\n\n`;
+    const zone = zones[z];
+
+    report += `
+${z}
+  Total lineouts: ${zone.total}
+
+  Set-up moves:
+`;
+
+    if (Object.keys(zone.setups).length) {
+      for (let s in zone.setups) {
+        report += `    ${s}: ${zone.setups[s]}\n`;
+      }
+    } else {
+      report += `    None recorded\n`;
+    }
+
+    report += `
+  Jumpers:
+`;
+
+    if (Object.keys(zone.jumpers).length) {
+      for (let j in zone.jumpers) {
+        report += `    #${j}: ${zone.jumpers[j]}\n`;
+      }
+    } else {
+      report += `    None recorded\n`;
+    }
+
+    report += `
+  Players in lineout:
+`;
+
+    if (Object.keys(zone.players).length) {
+      for (let p in zone.players) {
+        report += `    ${p}-man: ${zone.players[p]}\n`;
+      }
+    } else {
+      report += `    None recorded\n`;
+    }
+
+    report += `
+  Ball position:
+`;
+
+    if (Object.keys(zone.balls).length) {
+      for (let b in zone.balls) {
+        report += `    ${b}: ${zone.balls[b]}\n`;
+      }
+    } else {
+      report += `    None recorded\n`;
+    }
+
+    report += `\n`;
   }
 
-  alert(r);
+  report += `END OF REPORT`;
+
+  alert(report);
 }
