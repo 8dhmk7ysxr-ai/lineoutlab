@@ -75,10 +75,11 @@ function validate() {
   if (!saveBtn) return;
 
   const ready =
-    zone !== null &&
-    jumper !== null &&
-    ball !== null &&
-    setup !== null;
+  teamName !== null &&
+  zone !== null &&
+  jumper !== null &&
+  ball !== null &&
+  setup !== null;
 
   saveBtn.disabled = !ready;
 }
@@ -90,13 +91,14 @@ function saveLineout() {
   const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
 
   data.push({
-    zone,
-    jumper,
-    ball,
-    setup,
-    won,
-    timestamp: Date.now()
-  });
+  team: teamName,
+  zone,
+  jumper,
+  ball,
+  setup,
+  won,
+  timestamp: Date.now()
+});
 
   localStorage.setItem("lineouts", JSON.stringify(data));
 
