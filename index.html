@@ -1,16 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width">
+  <meta charset="UTF-8">
+  <title>LineoutLab</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h2>TEST</h2>
+<h1>🏉 LineoutLab</h1>
 
-<button onclick="selectGroup(this)">Button 1</button>
-<button onclick="selectGroup(this)">Button 2</button>
-<button onclick="selectGroup(this)">Button 3</button>
+<!-- TEAM -->
+<section>
+  <h2>Team</h2>
+  <input id="teamInput" placeholder="Team name">
+  <button onclick="startMatch()">Start Match</button>
+  <p id="teamDisplay"></p>
+</section>
+
+<!-- DEFENDERS FIELD ZONE -->
+<section>
+  <h2>Defenders Field Zone</h2>
+  <div class="row">
+    <button class="zone-btn red"
+      onclick="selectOne(this,'zone','Red')">Red</button>
+    <button class="zone-btn yellow"
+      onclick="selectOne(this,'zone','Yellow')">Yellow</button>
+    <button class="zone-btn green"
+      onclick="selectOne(this,'zone','Green')">Green</button>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section>
+  <h2>Result</h2>
+  <div class="row">
+    <button class="result-btn"
+      onclick="selectOne(this,'result',true)">Won</button>
+    <button class="result-btn"
+      onclick="selectOne(this,'result',false)">Lost</button>
+    <button class="ns-btn"
+      onclick="toggleNotStraight(this)">Not Straight</button>
+  </div>
+</section>
+
+<!-- PLAYERS -->
+<section>
+  <h2>Players in Lineout</h2>
+  <div class="row">
+    <button onclick="selectOne(this,'players',3)">3</button>
+    <button onclick="selectOne(this,'players',4)">4</button>
+    <button onclick="selectOne(this,'players',5)">5</button>
+    <button onclick="selectOne(this,'players',6)">6</button>
+    <button onclick="selectOne(this,'players',7)">7</button>
+  </div>
+</section>
+
+<!-- JUMPER -->
+<section>
+  <h2>Jumper</h2>
+  <div class="row">
+    <button onclick="selectOne(this,'jumper',1)">1</button>
+    <button onclick="selectOne(this,'jumper',2)">2</button>
+    <button onclick="selectOne(this,'jumper',3)">3</button>
+    <button onclick="selectOne(this,'jumper',4)">4</button>
+    <button onclick="selectOne(this,'jumper',5)">5</button>
+    <button onclick="selectOne(this,'jumper',6)">6</button>
+    <button onclick="selectOne(this,'jumper',7)">7</button>
+    <button onclick="selectOne(this,'jumper',8)">8</button>
+    <button onclick="selectOne(this,'jumper',9)">9</button>
+  </div>
+</section>
+
+<!-- BALL -->
+<section>
+  <h2>Ball Position</h2>
+  <div class="row">
+    <button onclick="selectOne(this,'ball','Front')">Front</button>
+    <button onclick="selectOne(this,'ball','Middle')">Middle</button>
+    <button onclick="selectOne(this,'ball','Back')">Back</button>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section>
+  <h2>Set-up Move</h2>
+  <div class="row">
+    <button onclick="selectOne(this,'setup','Drive')">Drive</button>
+    <button onclick="selectOne(this,'setup','Run')">Run</button>
+    <button onclick="selectOne(this,'setup','Move')">Move</button>
+    <button onclick="selectOne(this,'setup','Kick')">Kick</button>
+  </div>
+</section>
+
+<!-- ACTIONS -->
+<section>
+  <button onclick="saveLineout()">Save Lineout</button>
+  <button onclick="generateReport()">View Match Report</button>
+  <button onclick="exportToExcel()">Export to Excel</button>
+</section>
 
 <script src="app.js"></script>
 </body>
