@@ -1,3 +1,4 @@
+alert("JS LOADED");
 let state = {
   team: null,
   zone: null,
