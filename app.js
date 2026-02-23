@@ -111,3 +111,28 @@ function exportToExcel() {
   a.download = "LineoutLab.csv";
   a.click();
 }
+
+function endMatch() {
+  if (!confirm("Is jy seker jy wil die wedstryd beëindig?")) return;
+
+  // Reset state (nuwe match)
+  state = {
+    team: null,
+    zone: null,
+    result: null,
+    notStraight: false,
+    players: null,
+    jumper: null,
+    ball: null,
+    setup: null
+  };
+
+  // Reset UI
+  document.querySelectorAll(".selected")
+    .forEach(b => b.classList.remove("selected"));
+
+  document.getElementById("teamInput").value = "";
+  document.getElementById("teamDisplay").innerText = "";
+
+  alert("Wedstryd beëindig. Gereed vir volgende match.");
+}
