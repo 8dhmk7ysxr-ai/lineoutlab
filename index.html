@@ -1,100 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>LineoutLab</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="style.css">
-</head>
+/* ========= STATE ========= */
+let state = {
+  team: null,
+  zone: null,
+  result: null,
+  notStraight: false,
+  players: null,
+  jumper: null,
+  ball: null,
+  setup: null
+};
 
-<body>
+/* ========= TEAM ========= */
+function startMatch() {
+  const v = document.getElementById("teamInput").value.trim();
+  if (!v) {
+    alert("Enter team name");
+    return;
+  }
+  state.team = v;
+  document.getElementById("teamDisplay").innerText = "Team: " + v;
+}
 
-<h1>🏉 LineoutLab</h1>
+/* ========= GENERIC SELECT ========= */
+function selectGroup(btn, group, key, value) {
+  // clear group
+  document.querySelectorAll("." + group).forEach(b => {
+    b.classList.remove("selected");
+  });
 
-<!-- TEAM -->
-<section>
-  <h2>Team</h2>
-  <input id="teamInput" placeholder="Team name">
-  <button onclick="startMatch()">Start Match</button>
-  <p id="teamDisplay"></p>
-</section>
+  // select this
+  btn.classList.add("selected");
+  state[key] = value;
 
-<!-- DEFENDERS FIELD ZONE -->
-<section>
-  <h2>Defenders Field Zone</h2>
-  <div class="row">
-    <button class="zone-btn red" onclick="pick(this,'zone','Red')">Red</button>
-    <button class="zone-btn yellow" onclick="pick(this,'zone','Yellow')">Yellow</button>
-    <button class="zone-btn green" onclick="pick(this,'zone','Green')">Green</button>
-</section>
+  // rules
+  if (key === "result") {
+    state.notStraight = false;
+    document.querySelectorAll(".ns-btn").forEach(b => b.classList.remove("selected"));
+    if (value === false) {
+      clearSetup();
+    }
+  }
+}
 
-<!-- RESULT + NOT STRAIGHT -->
-<section>
-  <h2>Result</h2>
-  <div class="row">
-    <button onclick="pick(this,'result',true)">Won</button>
-    <button onclick="pick(this,'result',false)">Lost</button>
-    <button onclick="toggleNS(this)">Not Straight</button>
-  </div>
-</section>
+/* ========= NOT STRAIGHT ========= */
+function toggleNotStraight(btn) {
+  state.notStraight = !state.notStraight;
+  state.result = false;
 
-<!-- PLAYERS -->
-<section>
-  <h2>Players in Lineout</h2>
-  <div class="row">
-    <button onclick="pick(this,'players',3)">3</button>
-    <button onclick="pick(this,'players',4)">4</button>
-    <button onclick="pick(this,'players',5)">5</button>
-    <button onclick="pick(this,'players',6)">6</button>
-    <button onclick="pick(this,'players',7)">7</button>
-  </div>
-</section>
+  btn.classList.toggle("selected");
 
-<!-- JUMPER -->
-<section>
-  <h2>Jumper</h2>
-  <div class="grid">
-    <button onclick="pick(this,'jumper',1)">1</button>
-    <button onclick="pick(this,'jumper',2)">2</button>
-    <button onclick="pick(this,'jumper',3)">3</button>
-    <button onclick="pick(this,'jumper',4)">4</button>
-    <button onclick="pick(this,'jumper',5)">5</button>
-    <button onclick="pick(this,'jumper',6)">6</button>
-    <button onclick="pick(this,'jumper',7)">7</button>
-    <button onclick="pick(this,'jumper',8)">8</button>
-    <button onclick="pick(this,'jumper',9)">9</button>
-  </div>
-</section>
+  // force Lost selected
+  document.querySelectorAll(".result-btn").forEach(b => {
+    if (b.dataset.value === "lost") {
+      b.classList.add("selected");
+    } else {
+      b.classList.remove("selected");
+    }
+  });
 
-<!-- BALL POSITION -->
-<section>
-  <h2>Ball Position</h2>
-  <div class="row">
-    <button onclick="pick(this,'ball','Front')">Front</button>
-    <button onclick="pick(this,'ball','Middle')">Middle</button>
-    <button onclick="pick(this,'ball','Back')">Back</button>
-  </div>
-</section>
+  clearSetup();
+}
 
-<!-- SET-UP MOVE -->
-<section>
-  <h2>Set-up Move (won only)</h2>
-  <div class="row">
-    <button onclick="pick(this,'setup','Drive')">Drive</button>
-    <button onclick="pick(this,'setup','Run')">Run</button>
-    <button onclick="pick(this,'setup','Move')">Move</button>
-    <button onclick="pick(this,'setup','Kick')">Kick</button>
-  </div>
-</section>
+/* ========= CLEAR SETUP ========= */
+function clearSetup() {
+  state.setup = null;
+  document.querySelectorAll(".setup-btn").forEach(b => b.classList.remove("selected"));
+}
 
-<!-- ACTIONS -->
-<section>
-  <button onclick="saveLineout()">Save Lineout</button>
-  <button onclick="generateReport()">View Match Report</button>
-</section>
-<!-- EXPORT -->
-<button onclick="exportToExcel()">Export to Excel</button>
+/* ========= SAVE ========= */
+function saveLineout() {
+  if (!state.team || !state.zone || state.result === null) {
+    alert("Team, zone and result required");
+    return;
+  }
 
-<script src="app.js"></script>
-</body>
-</html>
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+  data.push({
+    ...state,
+    time: Date.now()
+  });
+  localStorage.setItem("lineouts", JSON.stringify(data));
+  alert("Lineout saved");
+}
+
+/* ========= REPORT ========= */
+function generateReport() {
+  const data = JSON.parse(localStorage.getItem("lineouts") || "[]");
+  if (!data.length) {
+    alert("No data recorded");
+    return;
+  }
+
+  const zones = {};
+
+  data.forEach(l => {
+    if (!zones[l.zone]) {
+      zones[l.zone] = {
+        total: 0,
+        setups: {},
+        jumpers: {},
+        players: {},
+        balls: {}
+      };
+    }
+
+    const z = zones[l.zone];
+    z.total++;
+
+    if (l.setup) z.setups[l.setup] = (z.setups[l.setup] || 0) + 1;
+    if (l.jumper) z.jumpers[l.jumper] = (z.jumpers[l.jumper] || 0) + 1;
+    if (l.players) z.players[l.players] = (z.players[l.players] || 0) + 1;
+    if (l.ball) z.balls[l.ball] = (z.balls[l.ball] || 0) + 1;
+  });
+
+  let report = `LINEOUTLAB MATCH REPORT\n\nTeam: ${state.team}\n\n`;
+
+  for (let z in zones) {
+    const o = zones[z];
+    report += `${z}\nTotal: ${o.total}\n`;
+
+    report += "Set-up moves:\n";
+    report += Object.keys(o.setups).length
+      ? Object.entries(o.setups).map(([k,v]) => `  ${k}: ${v}`).join("\n")
+      : "  None";
+    report += "\nJumpers:\n";
+    report += Object.keys(o.jumpers).length
+      ? Object.entries(o.jumpers).map(([k,v]) => `  #${k}: ${v}`).join("\n")
+      : "  None";
+    report += "\nPlayers in lineout:\n";
+    report += Object.keys(o.players).length
+      ? Object.entries(o.players).map(([k,v]) => `  ${k}-man: ${v}`).join("\n")
+      : "  None";
+    report += "\nBall position:\n";
+    report += Object.keys(o.balls).length
+      ? Object.entries(o.balls).map(([k,v]) => `  ${k}: ${v}`).join("\n")
+      : "  None";
+
+    report += "\n\n";
+  }
+
+  alert(report);
+}
